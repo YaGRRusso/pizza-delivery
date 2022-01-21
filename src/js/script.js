@@ -107,7 +107,19 @@ qs('.pizzaInfo--addButton').addEventListener('click', ()=>{
   closeModal()
 })
 
+qs('.menu-openner').addEventListener('click', ()=>{
+    if(cart.length > 0){
+      qs('aside').style.left = '0'
+    }
+})
+
+qs('.menu-closer').addEventListener('click', ()=>{
+  qs('aside').style.left = '100vw'
+})
+
 function updateCart() {
+  qs('.menu-openner span').innerHTML = cart.length
+
   if (cart.length > 0){
     qs('aside').classList.add('show')
     qs('.cart').innerHTML = ''
@@ -119,24 +131,29 @@ function updateCart() {
     for (let i in cart) {
 
       let pizzaItem = pizzaJson.find((item) => item.id === cart[i].id)
-      sub = pizzaItem.prices[0] * cart[i].qt
-
+      
       let cartItem = qs('.models .cart--item').cloneNode(true)
 
       let sizeName
+      let sizePrice
       switch(cart[i].size){
         case '0':
           sizeName='P'
+          sizePrice= pizzaItem.prices[0]
         break
         case '1':
           sizeName='M'
+          sizePrice= pizzaItem.prices[1]
         break
         case '2':
           sizeName='G'
+          sizePrice= pizzaItem.prices[2]
         break
       }
 
-      let pizzaName = `${pizzaItem.name} (${sizeName})`
+      sub += sizePrice * cart[i].qt
+
+      let pizzaName = `${pizzaItem.name} (${sizeName}) <span>- R$ ${sizePrice.toFixed(2)}</span>`
 
       cartItem.querySelector('img').src = pizzaItem.img
       cartItem.querySelector('.cart--item-nome').innerHTML = pizzaName
@@ -166,5 +183,6 @@ function updateCart() {
 
   } else {
     qs('aside').classList.remove('show')
+    qs('aside').style.left = '100vw'
   }
 }
