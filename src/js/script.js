@@ -72,11 +72,16 @@ qsa('.pizzaInfo--size').forEach((size)=>{
     qs('.pizzaInfo--size.selected').classList.remove('selected')
     size.classList.add('selected')
     switch (sizePrice) {
-      case '0': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[0].toFixed(2)}`
+      case '0':
+        qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[0].toFixed(2)}`
       break;
-      case '1': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[1].toFixed(2)}`
+
+      case '1':
+        qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[1].toFixed(2)}`
       break;
-      case '2': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[2].toFixed(2)}`
+
+      case '2':
+        qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[2].toFixed(2)}`
       break;
     }
   })
@@ -98,5 +103,42 @@ qs('.pizzaInfo--addButton').addEventListener('click', ()=>{
       qt: modalQt
     })
   }
+  updateCart()
   closeModal()
 })
+
+function updateCart() {
+  if (cart.length > 0){
+    qs('aside').classList.add('show')
+    qs('.cart').innerHTML = ''
+    for (let i in cart) {
+
+      let pizzaItem = pizzaJson.find((item) => item.id === cart[i].id)
+      let cartItem = qs('.models .cart--item').cloneNode(true)
+
+      let sizeName
+      switch(cart[i].size){
+        case '0':
+          sizeName='P'
+        break
+        case '1':
+          sizeName='M'
+        break
+        case '2':
+          sizeName='G'
+        break
+      }
+
+      let pizzaName = `${pizzaItem.name} (${sizeName})`
+
+      cartItem.querySelector('img').src = pizzaItem.img
+      cartItem.querySelector('.cart--item-nome').innerHTML = pizzaName
+      cartItem.querySelector('.cart--item--qt').innerHTML = cart[i].qt
+
+      qs('.cart').append(cartItem)
+    }
+
+  } else {
+    qs('aside').classList.remove('show')
+  }
+}
