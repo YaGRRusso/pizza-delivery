@@ -1,4 +1,7 @@
 let modalQt = 1
+let cart = []
+let modalKey = 0
+
 const qs = (el) => document.querySelector(el)
 const qsa = (el) => document.querySelectorAll(el)
 
@@ -15,6 +18,7 @@ pizzaJson.map((item, index) => {
     e.preventDefault()
     let key = e.target.closest('.pizza-item').getAttribute('data-key')
     modalQt = 1
+    modalKey = key
 
     // console.log(pizzaJson[key])
     qs('.pizzaBig img').src = pizzaJson[key].img
@@ -50,4 +54,49 @@ function closeModal(){
 }
 qsa('.pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton').forEach((item)=>{
   item.addEventListener('click', closeModal)
+})
+
+qs('.pizzaInfo--qtmenos').addEventListener('click', ()=>{
+  if (modalQt>1){
+    modalQt--
+    qs('.pizzaInfo--qt').innerHTML = modalQt
+  }
+})
+qs('.pizzaInfo--qtmais').addEventListener('click', ()=>{
+  modalQt++
+  qs('.pizzaInfo--qt').innerHTML = modalQt
+})
+qsa('.pizzaInfo--size').forEach((size)=>{
+  let sizePrice = size.getAttribute('data-key')
+  size.addEventListener('click', (e) => {
+    qs('.pizzaInfo--size.selected').classList.remove('selected')
+    size.classList.add('selected')
+    switch (sizePrice) {
+      case '0': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[0].toFixed(2)}`
+      break;
+      case '1': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[1].toFixed(2)}`
+      break;
+      case '2': qs('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[modalKey].prices[2].toFixed(2)}`
+      break;
+    }
+  })
+})
+qs('.pizzaInfo--addButton').addEventListener('click', ()=>{
+  let size = qs('.pizzaInfo--size.selected').getAttribute('data-key')
+
+  let identifier = pizzaJson[modalKey].id+":"+size
+
+  let key = cart.findIndex((item) => item.identifier === identifier)
+
+  if (key >= 0){
+    cart[key].qt += modalQt
+  } else {
+    cart.push({
+      identifier,
+      id:pizzaJson[modalKey].id,
+      size: size,
+      qt: modalQt
+    })
+  }
+  closeModal()
 })
